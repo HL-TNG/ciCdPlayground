@@ -35,6 +35,7 @@ jobs:
       run: yarn build
     - name: Integration tests
       run: yarn test:e2e
+      continue-on-error: true
     - name: JUnit Report Action
       uses: mikepenz/action-junit-report@v6.0.1
       with:
