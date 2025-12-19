@@ -26,7 +26,15 @@ jobs:
       run: yarn
     - name: Unit tests
       run: yarn test
+    - name: JUnit Report Action
+      uses: mikepenz/action-junit-report@v6.0.1
+      with:
+        report_paths: "**/reports/**/*.xml"
     - name: Build
       run: yarn build
     - name: Integration tests
       run: yarn test:e2e
+    - name: JUnit Report Action
+      uses: mikepenz/action-junit-report@v6.0.1
+      with:
+        report_paths: "**/reports/**/*.xml"
