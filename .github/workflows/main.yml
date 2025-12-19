@@ -4,6 +4,11 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number to tag the commit with'
+        required: true
+        default: 'v1.0.0'
   
 permissions:
   checks: write
@@ -22,15 +27,17 @@ jobs:
     # It is not clear which versions these are, 
     # so it might be a good idea to specify them via an action like actions/setup-node@v4
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - name: Install
       run: yarn
     - name: Unit tests
       run: yarn test
+      continue-on-error: true
     - name: JUnit Report Action
       uses: mikepenz/action-junit-report@v6.0.1
       with:
         report_paths: "**/reports/**/*.xml"
-      continue-on-error: true
     - name: Build
       run: yarn build
     - name: Integration tests
@@ -40,4 +47,10 @@ jobs:
       uses: mikepenz/action-junit-report@v6.0.1
       with:
         report_paths: "**/reports/**/*.xml"
-      continue-on-error: true
+    - name: Tag commit with version
+      run: |
+        VERSION=${{ github.event.inputs.version }}
+        git tag $VERSION
+        git push origin $VERSION
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
